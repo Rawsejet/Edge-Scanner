@@ -1,0 +1,23 @@
+# prometheus.yml — local monitoring config for the scanner mini PC.
+# Everything scrapes localhost: this box monitors only itself.
+
+global:
+  scrape_interval: 30s
+  evaluation_interval: 30s
+
+scrape_configs:
+  # Scanner suite metrics from dashboard.py /metrics
+  - job_name: edge_scanners
+    static_configs:
+      - targets: ["localhost:8787"]
+
+  # Prometheus self-monitoring
+  - job_name: prometheus
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  # Optional: windows_exporter for host CPU/RAM/disk (install separately,
+  # see MONITORING_SETUP.md). Uncomment after installing.
+  # - job_name: windows
+  #   static_configs:
+  #     - targets: ["localhost:9182"]

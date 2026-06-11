@@ -1,0 +1,69 @@
+{
+  "title": "Edge Scanner Suite",
+  "uid": "edge-scanners",
+  "timezone": "browser",
+  "refresh": "30s",
+  "time": { "from": "now-24h", "to": "now" },
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Momentum Regime",
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+      "targets": [{ "expr": "scanner_regime_on{scanner=\"MOMENTUM\"}", "refId": "A" }],
+      "fieldConfig": { "defaults": { "mappings": [
+        { "type": "value", "options": { "0": { "text": "STANDING DOWN", "color": "red" },
+                                         "1": { "text": "RISK-ON", "color": "green" } } }
+      ] } }
+    },
+    {
+      "type": "stat",
+      "title": "MeanRev Crash Guard",
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+      "targets": [{ "expr": "scanner_regime_on{scanner=\"MEANREV\"}", "refId": "A" }],
+      "fieldConfig": { "defaults": { "mappings": [
+        { "type": "value", "options": { "0": { "text": "GUARD ACTIVE", "color": "red" },
+                                         "1": { "text": "CLEAR", "color": "green" } } }
+      ] } }
+    },
+    {
+      "type": "stat",
+      "title": "Minutes Since Last Scan",
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+      "targets": [{ "expr": "(time() - scanner_last_scan_timestamp) / 60", "refId": "A" }],
+      "fieldConfig": { "defaults": { "unit": "m", "thresholds": { "steps": [
+        { "color": "green", "value": null },
+        { "color": "yellow", "value": 10 },
+        { "color": "red", "value": 30 }
+      ] } } }
+    },
+    {
+      "type": "stat",
+      "title": "Scanner Errors (24h)",
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
+      "targets": [{ "expr": "sum(increase(scanner_errors_total[24h]))", "refId": "A" }],
+      "fieldConfig": { "defaults": { "thresholds": { "steps": [
+        { "color": "green", "value": null },
+        { "color": "red", "value": 1 }
+      ] } } }
+    },
+    {
+      "type": "timeseries",
+      "title": "Signals per Scan by Scanner",
+      "gridPos": { "h": 9, "w": 16, "x": 0, "y": 4 },
+      "targets": [{ "expr": "scanner_signals", "legendFormat": "{{scanner}}", "refId": "A" }]
+    },
+    {
+      "type": "timeseries",
+      "title": "Scan Duration (p50 / p95)",
+      "gridPos": { "h": 9, "w": 8, "x": 16, "y": 4 },
+      "targets": [
+        { "expr": "histogram_quantile(0.5, rate(scanner_scan_duration_seconds_bucket[1h]))",
+          "legendFormat": "p50", "refId": "A" },
+        { "expr": "histogram_quantile(0.95, rate(scanner_scan_duration_seconds_bucket[1h]))",
+          "legendFormat": "p95", "refId": "B" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s" } }
+    }
+  ],
+  "schemaVersion": 39
+}

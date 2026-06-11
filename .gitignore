@@ -1,0 +1,11 @@
+# local Python environment — recreate via COMPLETE_SETUP_GUIDE.md Part 2
+.venv/
+__pycache__/
+*.pyc
+
+# local Claude Code settings
+.claude/
+
+# machine-local output and transcripts (scan results, install logs)
+scans/
+*.log
